@@ -16,69 +16,16 @@
             </div>
             <nav class="main-nav">
                 <ul>
-                    <li><a href="#" class="active">Начало</a></li>
-                    <li><a href="#">Регистри</a></li>
-                    <li><a href="#">Билети</a></li>
+                    <li><a href="/" class="active">Начало</a></li>
+                    <li><a href="/halk">Регистри</a></li>
+                    <li><a href="">Билети</a></li>
                     <li><a href="#">Инспекции</a></li>
                     <li><a href="#" class="btn-login">Вход</a></li>
                 </ul>
             </nav>
         </div>
     </header>
-
-    <section class="hero-section">
-        <div class="container hero-content">
-            <h2>Управление на рибарството и аквакултурите</h2>
-            <p>Единна платформа за регистрация на кораби, издаване на разрешителни, любителски риболов и контрол на терен.</p>
-            <div class="hero-buttons">
-                <a href="#" class="btn btn-primary">Купи билет за риболов</a>
-                <a href="#" class="btn btn-secondary">Електронен дневник</a>
-            </div>
-        </div>
-    </section>
-
-    <section class="modules-section">
-        <div class="container">
-            <h3 class="section-title">Основни софтуерни модули</h3>
-            <div class="modules-grid">
-                
-                <div class="module-card">
-                    <div class="card-icon">🚢</div>
-                    <h4>Регистри и Разрешителни</h4>
-                    <p>Управление на риболовните кораби, технически параметри, собственици и валидност на разрешителните за улов.</p>
-                    <a href="#" class="card-link">Към регистъра &rarr;</a>
-                </div>
-
-                <div class="module-card">
-                    <div class="card-icon">📊</div>
-                    <h4>Проследяемост и Дневници</h4>
-                    <p>Подаване на данни за риболовни операции в реално време за кораби над 10 метра и проследяване на улова до магазините.</p>
-                    <a href="#" class="card-link">Вход в дневника &rarr;</a>
-                </div>
-
-                <div class="module-card">
-                    <div class="card-icon">📱</div>
-                    <h4>Контрол и Инспекции</h4>
-                    <p>Мобилен панел за инспектори. Проверка на обекти, билети и разрешителни с възможност за офлайн синхронизация.</p>
-                    <a href="#" class="card-link">Инспекторски достъп &rarr;</a>
-                </div>
-
-                <div class="module-card">
-                    <div class="card-icon">🎣</div>
-                    <h4>Любителски риболов</h4>
-                    <p>Издаване на дигитални билети за граждани, автоматична проверка на ТЕЛК и бързо регистриране на улова през приложението.</p>
-                    <a href="#" class="card-link">Издаване на билет &rarr;</a>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <footer class="main-footer">
-        <div class="container">
-            <p>&copy; 2026 Изпълнителна Агенция по Рибарство и Аквакултури (ИАРА). Всички права запазени.</p>
-        </div>
-    </footer>
-
+    {% block content %}
+    {% endblock %} 
 </body>
 </html>
