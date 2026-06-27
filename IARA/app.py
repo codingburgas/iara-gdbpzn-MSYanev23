@@ -32,6 +32,9 @@ class FishingTicket(db.Model):
 def index():
     return render_template("home.html")    
     
+@app.route('/tickets')
+def tickets_page():
+    return render_template("tickets.html")
 
 if __name__ == '__main__':
     app.run(debug=True)
