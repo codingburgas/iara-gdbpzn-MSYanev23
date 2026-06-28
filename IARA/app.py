@@ -35,6 +35,12 @@ def index():
 @app.route('/tickets')
 def tickets_page():
     return render_template("tickets.html")
-
+@app.route('/register')
+def register_page():
+    # Изтегляме всички записи от таблицата fishing_tickets, подредени по дата на създаване (най-новите най-отгоре)
+    all_tickets = FishingTicket.query.order_by(FishingTicket.created_at.desc()).all()
+    
+    # Изпращаме променливата all_tickets към HTML файла под името 'tickets'
+    return render_template("register.html", tickets=all_tickets)
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,38 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 40px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); font-family: Arial, sans-serif;">
+    <h2 style="margin-top: 0; color: #2c3e50;">Регистър на издадените любителски билети</h2>
+    
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px; text-align: left;">
+        <thead>
+            <tr style="background-color: #34495e; color: white;">
+                <th style="padding: 12px; border: 1px solid #ddd;">ID</th>
+                <th style="padding: 12px; border: 1px solid #ddd;">Име на риболовеца</th>
+                <th style="padding: 12px; border: 1px solid #ddd;">ЕГН</th>
+                <th style="padding: 12px; border: 1px solid #ddd;">Тип билет</th>
+                <th style="padding: 12px; border: 1px solid #ddd;">Категория</th>
+                <th style="padding: 12px; border: 1px solid #ddd;">Цена</th>
+                <th style="padding: 12px; border: 1px solid #ddd;">Валиден до</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ticket in tickets %}
+            <tr style="background-color: {% if loop.index0 % 2 == 0 %}#f9f9f9{% else %}white{% endif %};">
+                <td style="padding: 12px; border: 1px solid #ddd; font-weight: bold;">{{ ticket.id }}</td>
+                <td style="padding: 12px; border: 1px solid #ddd;">{{ ticket.holder_name }}</td>
+                <td style="padding: 12px; border: 1px solid #ddd;">{{ ticket.holder_egn }}</td>
+                <td style="padding: 12px; border: 1px solid #ddd;">{{ ticket.ticket_type }}</td>
+                <td style="padding: 12px; border: 1px solid #ddd;">{{ ticket.category }}</td>
+                <td style="padding: 12px; border: 1px solid #ddd; color: #27ae60; font-weight: bold;">{{ "%.2f"|format(ticket.price) }} лв.</td>
+                <td style="padding: 12px; border: 1px solid #ddd;">{{ ticket.valid_to.strftime('%d.%m.%Y %H:%M') }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" style="padding: 20px; text-align: center; color: #7f8c8d;">Няма намерени издадени билети в базата данни.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
