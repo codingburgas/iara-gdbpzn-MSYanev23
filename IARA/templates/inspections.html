@@ -1,0 +1,79 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="content-card">
+        <h3 class="section-title" style="text-align: left; margin-bottom: 20px;">Регистриране на нова инспекция</h3>
+        <form action="{{ url_for('inspections_page') }}" method="POST">
+            <div class="form-group">
+                <label class="form-label">Име на инспектор</label>
+                <input type="text" name="inspector_name" required class="form-input">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">ЕГН на провереното лице</label>
+                <input type="text" name="target_egn" required class="form-input">
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-container">
+                    <input type="checkbox" name="is_violation">
+                    Констатирано е нарушение (Издаване на акт)
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Размер на глобата (лв.)</label>
+                <input type="number" step="0.01" name="fine_amount" class="form-input">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Описание на проверката / нарушението</label>
+                <textarea name="description" rows="4" class="form-input" style="resize: vertical;"></textarea>
+            </div>
+
+            <button type="submit" class="btn-navy">Запиши инспекцията</button>
+        </form>
+    </div>
+
+    <div class="content-card">
+        <h3 class="section-title" style="text-align: left; margin-bottom: 20px;">История на проверките</h3>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Инспектор</th>
+                        <th>ЕГН на проверен</th>
+                        <th>Нарушение</th>
+                        <th>Глоба</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ins in inspections %}
+                    <tr class="{{ 'row-violation' if ins.is_violation else '' }}">
+                        <td>{{ ins.date_checked.strftime('%d.%m.%Y %H:%M') }}</td>
+                        <td>{{ ins.inspector_name }}</td>
+                        <td>{{ ins.target_egn }}</td>
+                        <td>
+                            <span class="{{ 'status-alert' if ins.is_violation else 'status-active' }}">
+                                {{ 'Да' if ins.is_violation else 'Не' }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-alert">
+                                {{ "%.2f лв."|format(ins.fine_amount) if ins.fine_amount else '-' }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #666;">Няма регистрирани инспекции до момента.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

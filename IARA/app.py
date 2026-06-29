@@ -25,7 +25,14 @@ class FishingTicket(db.Model):
     valid_to = db.Column(db.DateTime, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-
+class Inspection(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    inspector_name = db.Column(db.String(100), nullable=False)
+    target_egn = db.Column(db.String(20), nullable=False)
+    is_violation = db.Column(db.Boolean, default=False)
+    fine_amount = db.Column(db.Float, nullable=True)
+    description = db.Column(db.Text, nullable=True)
+    date_checked = db.Column(db.DateTime, default=datetime.now)
 
 
 @app.route('/')
@@ -99,5 +106,43 @@ def buy_ticket():
     return redirect(url_for('tickets_page'))
 
 
+@app.route('/inspections', methods=['GET', 'POST'])
+def inspections_page():
+    if request.method == 'POST':
+        inspector = request.form.get('inspector_name')
+        egn = request.form.get('target_egn')
+        violation = True if request.form.get('is_violation') == 'on' else False
+        fine = request.form.get('fine_amount')
+        desc = request.form.get('description')
+
+        fine_value = 0.0
+        if fine:
+            fine_value = float(fine)
+
+        new_inspection = Inspection(
+            inspector_name=inspector,
+            target_egn=egn,
+            is_violation=violation,
+            fine_amount=fine_value,
+            description=desc,
+            date_checked=datetime.now()
+        )
+        
+        try:
+            db.session.add(new_inspection)
+            db.session.commit()
+            flash("Инспекцията е записана успешно!")
+        except Exception as e:
+            db.session.rollback()
+            print("ГРЕШКА:", str(e))
+            flash("Възникна грешка при записа.")
+            
+        return redirect(url_for('inspections_page'))
+
+    all_inspections = Inspection.query.order_by(Inspection.date_checked.desc()).all()
+    return render_template('inspections.html', inspections=all_inspections)
+
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)
