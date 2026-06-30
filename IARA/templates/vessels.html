@@ -1,0 +1,85 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="content-card">
+        <h3 class="section-title" style="text-align: left; margin-bottom: 20px;">Вписване на нов риболовен кораб</h3>
+        <form action="{{ url_for('vessels_page') }}" method="POST">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Международен номер (CFR)</label>
+                    <input type="text" name="cfr_number" required class="form-input" placeholder="Напр. BGR00123456">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Име на кораба</label>
+                    <input type="text" name="vessel_name" required class="form-input">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Радио позивна</label>
+                    <input type="text" name="call_sign" class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Име на корабособственик</label>
+                    <input type="text" name="owner_name" required class="form-input">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Капитан на кораба</label>
+                <input type="text" name="captain_name" required class="form-input">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Дължина (метри)</label>
+                    <input type="number" step="0.1" name="length" required class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Мощност на двигателя (kW)</label>
+                    <input type="number" step="0.1" name="engine_power" required class="form-input">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-navy" style="border: none;">Регистрирай кораба</button>
+        </form>
+    </div>
+
+    <div class="content-card">
+        <h3 class="section-title" style="text-align: left; margin-bottom: 20px;">Регистър на активните кораби</h3>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>CFR Номер</th>
+                        <th>Име</th>
+                        <th>Собственик</th>
+                        <th>Капитан</th>
+                        <th>Дължина / Мощност</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vessel in vessels %}
+                    <tr>
+                        <td style="font-weight: bold; color: #134074;">{{ vessel.cfr_number }}</td>
+                        <td>{{ vessel.vessel_name }}</td>
+                        <td>{{ vessel.owner_name }}</td>
+                        <td>{{ vessel.captain_name }}</td>
+                        <td>{{ vessel.length }} м / {{ vessel.engine_power }} kW</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #666;">Няма регистрирани риболовни кораби.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

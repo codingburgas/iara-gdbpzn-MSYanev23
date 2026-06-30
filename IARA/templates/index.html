@@ -9,21 +9,20 @@
 <body>
 
     <header class="main-header">
-        <div class="container header-flex">
-            <div class="logo">
-                <h1>ИАРА</h1>
-                <span>Информационна Система</span>
-            </div>
-            <nav class="main-nav">
-                <ul>
-                    <li><a href="/" class="active">Начало</a></li>
-                    <li><a href="/register">Регистри</a></li>
-                    <li><a href="/tickets">Билети</a></li>
-                    <li><a href="{{url_for('inspections_page')}}">Инспекции</a></li>
-                    <li><a href="#" class="btn-login">Вход</a></li>
-                </ul>
-            </nav>
+    <div class="container header-flex">
+        <div class="logo">
+            <h1>ИАРА <span>Информационна Система</span></h1>
         </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="{{ url_for('index') }}">Начало</a></li>
+                <li><a href="{{ url_for('inspections_page') }}">Инспекции</a></li>
+                <li><a href="{{ url_for('vessels_page') }}">Кораби</a></li>
+                <li><a href="{{ url_for('tickets_page') }}">Разрешителни</a></li>
+                <li><a href="#" class="btn-login">Вход</a></li>
+            </ul>
+        </nav>
+    </div>
     </header>
     {% block content %}
     {% endblock %} 

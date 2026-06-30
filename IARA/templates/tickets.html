@@ -1,53 +1,57 @@
 {% extends 'index.html' %}
 
 {% block content %}
-<div class="form-container" style="max-width: 500px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin: 40px auto; font-family: Arial, sans-serif;">
-    <h2 style="margin-top: 0;">Издаване на любителски риболовен билет</h2>
-    
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                <div style="padding: 10px; background-color: #d4edda; color: #155724; border-radius: 4px; margin-bottom: 15px;">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+<div class="container">
+    <div class="content-card" style="max-width: 600px; margin: 20px auto;">
+        <h3 class="section-title" style="text-align: left; margin-bottom: 20px;">Издаване на любителски риболовен билет</h3>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div style="padding: 12px; background-color: #d4edda; color: #155724; border-radius: 4px; margin-bottom: 20px; font-weight: 600;">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-    <form action="/buy-ticket" method="POST">
-        <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Три имена:</label>
-            <input type="text" name="holder_name" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
-        </div>
+        <form action="/buy-ticket" method="POST">
+            <div class="form-group">
+                <label class="form-label">Три имена</label>
+                <input type="text" name="holder_name" required class="form-input">
+            </div>
 
-        <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; font-weight: bold;">ЕГН:</label>
-            <input type="text" name="holder_egn" maxlength="10" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
-        </div>
+            <div class="form-group">
+                <label class="form-label">ЕГН</label>
+                <input type="text" name="holder_egn" maxlength="10" required class="form-input">
+            </div>
 
-        <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Срок на билета:</label>
-            <select name="ticket_type" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
-                <option value="Седмичен">Седмичен (4.00 лв.)</option>
-                <option value="Месечен">Месечен (8.00 лв.)</option>
-                <option value="Годишен">Годишен (25.00 лв.)</option>
-            </select>
-        </div>
+            <div class="form-group">
+                <label class="form-label">Срок на билета</label>
+                <select name="ticket_type" class="form-input" style="background-color: white;">
+                    <option value="Седмичен">Седмичен (4.00 лв.)</option>
+                    <option value="Месечен">Месечен (8.00 лв.)</option>
+                    <option value="Годишен">Годишен (25.00 лв.)</option>
+                </select>
+            </div>
 
-        <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Категория:</label>
-            <select name="category" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
-                <option value="Стандартен">Стандартен</option>
-                <option value="Под 14г">Дете под 14г (Безплатно)</option>
-                <option value="Пенсионер">Пенсионер (50% намаление)</option>
-                <option value="ТЕЛК">Лице с увреждания /ТЕЛК/ (Безплатно)</option>
-            </select>
-        </div>
+            <div class="form-group">
+                <label class="form-label">Категория</label>
+                <select name="category" class="form-input" style="background-color: white;">
+                    <option value="Стандартен">Стандартен</option>
+                    <option value="Под 14г">Дете под 14г (Безплатно)</option>
+                    <option value="Пенсионер">Пенсионер (50% намаление)</option>
+                    <option value="ТЕЛК">Лице с увреждания /ТЕЛК/ (Безплатно)</option>
+                </select>
+            </div>
 
-        <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Номер на ТЕЛК решение (ако е приложимо):</label>
-            <input type="text" name="telk_number" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
-        </div>
+            <div class="form-group">
+                <label class="form-label">Номер на ТЕЛК решение (ако е приложимо)</label>
+                <input type="text" name="telk_number" class="form-input">
+            </div>
 
-        <button type="submit" style="background-color: #2ecc71; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; width: 100%; font-size: 16px;">Запиши и издай билет</button>
-    </form>
+            <button type="submit" class="btn-navy" style="border: none; width: 100%;">Запиши и издай билет</button>
+        </form>
+    </div>
 </div>
 {% endblock %}

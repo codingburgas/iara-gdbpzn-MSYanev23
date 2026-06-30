@@ -34,6 +34,16 @@ class Inspection(db.Model):
     description = db.Column(db.Text, nullable=True)
     date_checked = db.Column(db.DateTime, default=datetime.now)
 
+class FishingVessel(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    cfr_number = db.Column(db.String(50), unique=True, nullable=False)  # Международен номер
+    vessel_name = db.Column(db.String(100), nullable=False)
+    call_sign = db.Column(db.String(50), nullable=True)                  # Позивна
+    owner_name = db.Column(db.String(150), nullable=False)
+    captain_name = db.Column(db.String(150), nullable=False)
+    length = db.Column(db.Float, nullable=False)                         # Дължина в метри
+    engine_power = db.Column(db.Float, nullable=False)                   # Мощност в kW
+    date_registered = db.Column(db.DateTime, default=datetime.now)
 
 @app.route('/')
 def index():
@@ -142,6 +152,42 @@ def inspections_page():
     all_inspections = Inspection.query.order_by(Inspection.date_checked.desc()).all()
     return render_template('inspections.html', inspections=all_inspections)
 
+@app.route('/vessels', methods=['GET', 'POST'])
+def vessels_page():
+    if request.method == 'POST':
+        cfr = request.form.get('cfr_number')
+        name = request.form.get('vessel_name')
+        sign = request.form.get('call_sign')
+        owner = request.form.get('owner_name')
+        captain = request.form.get('captain_name')
+        length_val = float(request.form.get('length', 0))
+        power_val = float(request.form.get('engine_power', 0))
+
+        new_vessel = FishingVessel(
+            cfr_number=cfr,
+            vessel_name=name,
+            call_sign=sign,
+            owner_name=owner,
+            captain_name=captain,
+            length=length_val,
+            engine_power=power_val,
+            date_registered=datetime.now()
+        )
+
+        try:
+            db.session.add(new_vessel)
+            db.session.commit()
+            flash(f"Корабът '{name}' беше регистриран успешно!")
+        except Exception as e:
+            db.session.rollback()
+            print("ГРЕШКА ПРИ ЗАПИС НА КОРАБ:", str(e))
+            flash("Възникна грешка. Възможно е този международен номер вече да съществува.")
+            
+        return redirect(url_for('vessels_page'))
+
+    all_vessels = FishingVessel.query.order_by(FishingVessel.date_registered.desc()).all()
+    return render_template('vessels.html', vessels=all_vessels)
+    
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
