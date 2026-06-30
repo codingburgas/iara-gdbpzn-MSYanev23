@@ -1,0 +1,87 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="content-card">
+        <h3 class="section-title" style="text-align: left; margin-bottom: 20px;">Деклариране на разтоварен улов и транспорт</h3>
+        <form action="{{ url_for('landings_page') }}" method="POST">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Изберете риболовна операция (Дневник)</label>
+                    <select name="log_id" required class="form-input" style="background-color: white;">
+                        <option value="" disabled selected>-- Изберете от списъка --</option>
+                        {% for log in logs %}
+                        <option value="{{ log.id }}">
+                            {{ log.vessel.vessel_name }} | {{ log.fish_species }} ({{ log.fish_quantity_kg }} кг)
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Пристанище на разтоварване</label>
+                    <input type="text" name="landing_port" required class="form-input" placeholder="Напр. Пристанище Бургас">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Разтоварен вид риба</label>
+                    <input type="text" name="unloaded_species" required class="form-input" placeholder="Напр. Сафрид">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Разтоварено количество (кг.)</label>
+                    <input type="number" step="0.1" name="weight_kg" required class="form-input">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Номер на хладилен камион / Транспорт</label>
+                    <input type="text" name="transport_vehicle" class="form-input" placeholder="Напр. СВ1234ХХ">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Крайна точка / Магазин / Склад</label>
+                    <input type="text" name="destination_shop" required class="form-input" placeholder="Напр. Магазин 'Черно Море' - София">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-navy" style="border: none;">Запиши в търговската верига</button>
+        </form>
+    </div>
+
+    <div class="content-card">
+        <h3 class="section-title" style="text-align: left; margin-bottom: 20px;">Път на рибата и активни транспортни вериги</h3>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Кораб (Произход)</th>
+                        <th>Пристанище</th>
+                        <th>Стока и Тегло</th>
+                        <th>Транспортно средство</th>
+                        <th>Крайна дестинация</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for landing in landings %}
+                    <tr>
+                        <td>{{ landing.log.vessel.vessel_name }}</td>
+                        <td>{{ landing.landing_port }}</td>
+                        <td class="text-price">{{ landing.unloaded_species }} - {{ landing.weight_kg }} кг</td>
+                        <td style="font-weight: bold; color: #134074;">{{ landing.transport_vehicle or 'Няма данни' }}</td>
+                        <td>{{ landing.destination_shop }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #666;">Няма регистрирани данни за дистрибуция.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -70,6 +70,19 @@ class FishingLog(db.Model):
 
     vessel = db.relationship('FishingVessel', backref=db.backref('logs', lazy=True))
 
+class FishLanding(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    log_id = db.Column(db.Integer, db.ForeignKey('fishing_log.id'), nullable=False)
+    landing_port = db.Column(db.String(100), nullable=False)        
+    unloaded_species = db.Column(db.String(100), nullable=False)    
+    weight_kg = db.Column(db.Float, nullable=False)                 
+    transport_vehicle = db.Column(db.String(50), nullable=True)     
+    destination_shop = db.Column(db.String(150), nullable=False)    
+    date_landed = db.Column(db.DateTime, default=datetime.now)
+
+    log = db.relationship('FishingLog', backref=db.backref('landings', lazy=True))
+
+
 @app.route('/')
 def index():
     return render_template("home.html")    
@@ -284,7 +297,44 @@ def logbook_page():
     all_logs = FishingLog.query.order_by(FishingLog.date_submitted.desc()).all()
     all_vessels = FishingVessel.query.all()
     return render_template('logbook.html', logs=all_logs, vessels=all_vessels)
-    
+
+
+@app.route('/landings', methods=['GET', 'POST'])
+def landings_page():
+    if request.method == 'POST':
+        l_id = request.form.get('log_id')
+        port = request.form.get('landing_port')
+        species = request.form.get('unloaded_species')
+        weight = float(request.form.get('weight_kg', 0))
+        vehicle = request.form.get('transport_vehicle')
+        shop = request.form.get('destination_shop')
+
+        new_landing = FishLanding(
+            log_id=l_id,
+            landing_port=port,
+            unloaded_species=species,
+            weight_kg=weight,
+            transport_vehicle=vehicle,
+            destination_shop=shop
+        )
+
+        try:
+            db.session.add(new_landing)
+            db.session.commit()
+            flash("Данните за разтоварване и дистрибуция бяха записани успешно!")
+        except Exception as e:
+            db.session.rollback()
+            print("ГРЕШКА ПРИ РАЗТОВАРВАНЕ:", str(e))
+            flash("Възникна грешка при запис на данните.")
+            
+        return redirect(url_for('landings_page'))
+
+    all_landings = FishLanding.query.order_by(FishLanding.date_landed.desc()).all()
+    all_logs = FishingLog.query.all()
+    return render_template('landings.html', landings=all_landings, logs=all_logs)
+
+
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
