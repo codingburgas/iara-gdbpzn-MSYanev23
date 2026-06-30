@@ -1,0 +1,90 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="content-card">
+        <h3 class="section-title" style="text-align: left; margin-bottom: 20px;">Нов запис в електронния дневник</h3>
+        <form action="{{ url_for('logbook_page') }}" method="POST">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Изберете риболовен кораб</label>
+                    <select name="vessel_id" required class="form-input" style="background-color: white;">
+                        <option value="" disabled selected>-- Изберете плавателен съд --</option>
+                        {% for vessel in vessels %}
+                        <option value="{{ vessel.id }}">{{ vessel.vessel_name }} ({{ vessel.cfr_number }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Начало на риболовната операция</label>
+                    <input type="datetime-local" name="trip_start" required class="form-input">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Местоположение / Морска зона</label>
+                    <input type="text" name="location" required class="form-input" placeholder="Напр. Зона 27 - Варна">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Продължителност на работа (часове)</label>
+                    <input type="number" step="0.5" name="duration_hours" required class="form-input">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Използвани риболовни уреди</label>
+                <input type="text" name="gear_used" required class="form-input" placeholder="Напр. Трал, Хрилна мрежа">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Вид уловена риба</label>
+                    <input type="text" name="fish_species" required class="form-input" placeholder="Напр. Калкан, Сафрид">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Уловено количество (кг.)</label>
+                    <input type="number" step="0.1" name="fish_quantity_kg" required class="form-input">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-navy" style="border: none;">Впиши операциите</button>
+        </form>
+    </div>
+
+    <div class="content-card">
+        <h3 class="section-title" style="text-align: left; margin-bottom: 20px;">История на риболовните операции</h3>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Кораб (CFR)</th>
+                        <th>Начало / Продължителност</th>
+                        <th>Морска зона</th>
+                        <th>Използвани уреди</th>
+                        <th>Улов (Вид и Количество)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td style="font-weight: bold; color: #134074;">{{ log.vessel.vessel_name }} ({{ log.vessel.cfr_number }})</td>
+                        <td>{{ log.trip_start.strftime('%d.%m.%Y %H:%M') }} ({{ log.duration_hours }} ч.)</td>
+                        <td>{{ log.location }}</td>
+                        <td>{{ log.gear_used }}</td>
+                        <td class="text-price">{{ log.fish_species }} - {{ log.fish_quantity_kg }} кг</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #666;">Няма въведени данни в електронния дневник.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

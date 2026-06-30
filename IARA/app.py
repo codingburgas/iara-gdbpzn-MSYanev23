@@ -57,6 +57,19 @@ class FishingPermit(db.Model):
     # Връзка към кораба, за да извличаме лесно неговите данни в шаблона
     vessel = db.relationship('FishingVessel', backref=db.backref('permits', lazy=True))
 
+class FishingLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    vessel_id = db.Column(db.Integer, db.ForeignKey('fishing_vessel.id'), nullable=False)
+    trip_start = db.Column(db.DateTime, nullable=False)
+    location = db.Column(db.String(100), nullable=False)
+    duration_hours = db.Column(db.Float, nullable=False)
+    gear_used = db.Column(db.String(100), nullable=False)
+    fish_species = db.Column(db.String(100), nullable=False)
+    fish_quantity_kg = db.Column(db.Float, nullable=False)
+    date_submitted = db.Column(db.DateTime, default=datetime.now)
+
+    vessel = db.relationship('FishingVessel', backref=db.backref('logs', lazy=True))
+
 @app.route('/')
 def index():
     return render_template("home.html")    
@@ -234,6 +247,44 @@ def permits_page():
     all_vessels = FishingVessel.query.all()  # Необходимо за попълване на падащото меню
     return render_template('permits.html', permits=all_permits, vessels=all_vessels)
 
+@app.route('/logbook', methods=['GET', 'POST'])
+def logbook_page():
+    if request.method == 'POST':
+        v_id = request.form.get('vessel_id')
+        start_str = request.form.get('trip_start')
+        loc = request.form.get('location')
+        duration = float(request.form.get('duration_hours', 0))
+        gear = request.form.get('gear_used')
+        species = request.form.get('fish_species')
+        quantity = float(request.form.get('fish_quantity_kg', 0))
+
+        start_dt = datetime.strptime(start_str, '%Y-%m-%dT%H:%M')
+
+        new_log = FishingLog(
+            vessel_id=v_id,
+            trip_start=start_dt,
+            location=loc,
+            duration_hours=duration,
+            gear_used=gear,
+            fish_species=species,
+            fish_quantity_kg=quantity
+        )
+
+        try:
+            db.session.add(new_log)
+            db.session.commit()
+            flash("Записът в електронния дневник е регистриран успешно!")
+        except Exception as e:
+            db.session.rollback()
+            print("ГРЕШКА ПРИ ЗАПИС В ДНЕВНИК:", str(e))
+            flash("Възникна грешка при въвеждането на данните.")
+            
+        return redirect(url_for('logbook_page'))
+
+    all_logs = FishingLog.query.order_by(FishingLog.date_submitted.desc()).all()
+    all_vessels = FishingVessel.query.all()
+    return render_template('logbook.html', logs=all_logs, vessels=all_vessels)
+    
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
