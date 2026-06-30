@@ -45,6 +45,18 @@ class FishingVessel(db.Model):
     engine_power = db.Column(db.Float, nullable=False)                   # Мощност в kW
     date_registered = db.Column(db.DateTime, default=datetime.now)
 
+class FishingPermit(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    permit_number = db.Column(db.String(50), unique=True, nullable=False)
+    vessel_id = db.Column(db.Integer, db.ForeignKey('fishing_vessel.id'), nullable=False)
+    valid_until = db.Column(db.Date, nullable=False)
+    allowed_gear = db.Column(db.String(200), nullable=False)  # Разрешени риболовни уреди
+    is_active = db.Column(db.Boolean, default=True)           # Може да бъде отнето при нарушение
+    date_issued = db.Column(db.DateTime, default=datetime.now)
+
+    # Връзка към кораба, за да извличаме лесно неговите данни в шаблона
+    vessel = db.relationship('FishingVessel', backref=db.backref('permits', lazy=True))
+
 @app.route('/')
 def index():
     return render_template("home.html")    
@@ -188,6 +200,40 @@ def vessels_page():
     all_vessels = FishingVessel.query.order_by(FishingVessel.date_registered.desc()).all()
     return render_template('vessels.html', vessels=all_vessels)
     
+@app.route('/permits', methods=['GET', 'POST'])
+def permits_page():
+    if request.method == 'POST':
+        p_number = request.form.get('permit_number')
+        v_id = request.form.get('vessel_id')
+        gear = request.form.get('allowed_gear')
+        until_str = request.form.get('valid_until')
+        
+        # Превръщаме текстовата дата от формата в обект за дата
+        valid_date = datetime.strptime(until_str, '%Y-%m-%d').date()
+
+        new_permit = FishingPermit(
+            permit_number=p_number,
+            vessel_id=v_id,
+            allowed_gear=gear,
+            valid_until=valid_date,
+            is_active=True
+        )
+
+        try:
+            db.session.add(new_permit)
+            db.session.commit()
+            flash("Разрешителното е издадено успешно!")
+        except Exception as e:
+            db.session.rollback()
+            print("ГРЕШКА ПРИ ЗАПИС НА РАЗРЕШИТЕЛНО:", str(e))
+            flash("Възникна грешка. Проверете дали този номер на разрешително вече не съществува.")
+            
+        return redirect(url_for('permits_page'))
+
+    all_permits = FishingPermit.query.order_by(FishingPermit.date_issued.desc()).all()
+    all_vessels = FishingVessel.query.all()  # Необходимо за попълване на падащото меню
+    return render_template('permits.html', permits=all_permits, vessels=all_vessels)
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()

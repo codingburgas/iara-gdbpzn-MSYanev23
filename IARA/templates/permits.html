@@ -1,0 +1,77 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="content-card">
+        <h3 class="section-title" style="text-align: left; margin-bottom: 20px;">Издаване на ново разрешително за риболов</h3>
+        <form action="{{ url_for('permits_page') }}" method="POST">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Номер на разрешително</label>
+                    <input type="text" name="permit_number" required class="form-input" placeholder="Напр. РЗ-2026-001">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Изберете риболовен кораб</label>
+                    <select name="vessel_id" required class="form-input" style="background-color: white;">
+                        <option value="" disabled selected>-- Изберете плавателен съд --</option>
+                        {% for vessel in vessels %}
+                        <option value="{{ vessel.id }}">{{ vessel.vessel_name }} ({{ vessel.cfr_number }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Валидно до дата</label>
+                    <input type="date" name="valid_until" required class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Разрешени риболовни уреди</label>
+                    <input type="text" name="allowed_gear" required class="form-input" placeholder="Напр. Хрилни мрежи, Дънни тралове">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-navy" style="border: none;">Издай разрешителното</button>
+        </form>
+    </div>
+
+    <div class="content-card">
+        <h3 class="section-title" style="text-align: left; margin-bottom: 20px;">Регистър на издадените разрешителни</h3>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Номер</th>
+                        <th>Кораб (CFR)</th>
+                        <th>Разрешени уреди</th>
+                        <th>Срок на валидност</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for permit in permits %}
+                    <tr>
+                        <td style="font-weight: bold; color: #134074;">{{ permit.permit_number }}</td>
+                        <td>{{ permit.vessel.vessel_name }} ({{ permit.vessel.cfr_number }})</td>
+                        <td>{{ permit.allowed_gear }}</td>
+                        <td>до {{ permit.valid_until.strftime('%d.%m.%Y') }}</td>
+                        <td>
+                            <span class="{{ 'status-active' if permit.is_active else 'status-alert' }}">
+                                {{ 'Активно' if permit.is_active else 'Отнето' }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #666;">Няма издадени разрешителни в системата.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
