@@ -82,6 +82,15 @@ class FishLanding(db.Model):
 
     log = db.relationship('FishingLog', backref=db.backref('landings', lazy=True))
 
+class EnforcementAct(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    act_number = db.Column(db.String(50), unique=True, nullable=False)
+    violator_type = db.Column(db.String(50), nullable=False)        # Кораб, Магазин, Хладилен камион, Любител
+    violator_name = db.Column(db.String(150), nullable=False)       # Име на лицето или фирмата/кораба
+    violation_details = db.Column(db.Text, nullable=False)          # Описание на нарушението
+    fine_amount = db.Column(db.Float, nullable=False)               # Размер на глобата в лева
+    status = db.Column(db.String(50), default="Издаден")            # Издаден, Платен, Обжалван
+    date_issued = db.Column(db.DateTime, default=datetime.now)
 
 @app.route('/')
 def index():
@@ -333,7 +342,37 @@ def landings_page():
     all_logs = FishingLog.query.all()
     return render_template('landings.html', landings=all_landings, logs=all_logs)
 
+@app.route('/acts', methods=['GET', 'POST'])
+def acts_page():
+    if request.method == 'POST':
+        act_num = request.form.get('act_number')
+        v_type = request.form.get('violator_type')
+        v_name = request.form.get('violator_name')
+        details = request.form.get('violation_details')
+        fine = float(request.form.get('fine_amount', 0))
 
+        new_act = EnforcementAct(
+            act_number=act_num,
+            violator_type=v_type,
+            violator_name=v_name,
+            violation_details=details,
+            fine_amount=fine,
+            status="Издаден"
+        )
+
+        try:
+            db.session.add(new_act)
+            db.session.commit()
+            flash("Актът за установеното нарушение е съставен успешно!")
+        except Exception as e:
+            db.session.rollback()
+            print("ГРЕШКА ПРИ СЪСТАВЯНЕ НА АКТ:", str(e))
+            flash("Неуспешно записване. Проверете дали този номер на акт вече не съществува.")
+            
+        return redirect(url_for('acts_page'))
+
+    all_acts = EnforcementAct.query.order_by(EnforcementAct.date_issued.desc()).all()
+    return render_template('acts.html', acts=all_acts)  
 
 if __name__ == '__main__':
     with app.app_context():
