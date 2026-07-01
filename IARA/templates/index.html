@@ -17,20 +17,26 @@
             <ul style="list-style: none; display: flex; gap: 20px; margin: 0; padding: 0;">
                 {% if session.get('user_id') %}
                     {% if session.get('role') == 'Инспектор' %}
-                        <li><a href="{{ url_for('vessels_page') }}" style="color: white; text-decoration: none;">Кораби</a></li>
-                        <li><a href="{{ url_for('permits_page') }}" style="color: white; text-decoration: none;">Разрешителни</a></li>
-                        <li><a href="{{ url_for('landings_page') }}" style="color: white; text-decoration: none;">Проследяемост</a></li>
-                        <li><a href="{{ url_for('acts_page') }}" style="color: white; text-decoration: none;">Актове и глоби</a></li>
+                        <li><a href="{{ url_for('vessels_page') }}">Кораби</a></li>
+                        <li><a href="{{ url_for('permits_page') }}">Разрешителни</a></li>
+                        <li><a href="{{ url_for('landings_page') }}">Проследяемост</a></li>
+                        <li><a href="{{ url_for('acts_page') }}">Актове и глоби</a></li>
                     {% elif session.get('role') == 'Капитан' %}
-                        <li><a href="{{ url_for('logbook_page') }}" style="color: white; text-decoration: none;">Електронен дневник</a></li>
-                        <li><a href="{{ url_for('landings_page') }}" style="color: white; text-decoration: none;">Деклариране на улов</a></li>
+                        <li><a href="{{ url_for('logbook_page') }}">Електронен дневник</a></li>
+                        <li><a href="{{ url_for('landings_page') }}">Деклариране на улов</a></li>
+                    {% elif session.get('role') == 'Администратор' %}
+                        <li><a href="{{ url_for('admin_users_page') }}">Контрол на персонал</a></li>
                     {% endif %}
-                    <li><a href="{{ url_for('tickets_page') }}" style="color: white; text-decoration: none;">Издаване на билет</a></li>
-                    <li><a href="{{ url_for('register_page') }}" style="color: white; text-decoration: none;">Регистър билети</a></li>
+                    <li><a href="{{ url_for('tickets_page') }}">Издаване на билет</a></li>
+                    <li><a href="{{ url_for('register_page') }}">Регистър билети</a></li>
+                    {% if session.get('role') == 'Администратор' %}
+                        <li style="margin-left: auto; color: #f4a261; font-weight: bold;">{{ session.get('full_name') }}</li>
+                    {% else %}
+                        <li style="margin-left: auto; color: #f4a261; font-weight: bold;">{{ session.get('full_name') }} ({{ session.get('role') }})</li>
+                    {% endif %}
                     <li><a href="{{ url_for('logout_action') }}" style="color: #ff4d4d; text-decoration: none; font-weight: bold;">Изход</a></li>
-                    <li style="margin-left: auto; color: #f4a261; font-weight: bold;">{{ session.get('full_name') }} ({{ session.get('role') }})</li>
-                    
                 {% else %}
+                    <li><a href="{{ url_for('index')}}">Начало</a></li>
                     <li style="margin-left: auto;"><a href="{{ url_for('login_page') }}" class="btn-login">Вход за служители</a></li>
                 {% endif %}
             </ul>

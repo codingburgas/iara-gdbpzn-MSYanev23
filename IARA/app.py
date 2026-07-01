@@ -407,23 +407,51 @@ def logout_action():
     flash("Успешно излязохте от системата.")
     return redirect(url_for('login_page'))
 
+@app.route('/admin/users', methods=['GET', 'POST'])
+def admin_users_page():
+    if session.get('role') != 'Администратор':
+        flash("Нямате администраторски права за достъп до тази страница.")
+        return redirect(url_for('login_page'))
+        
+    if request.method == 'POST':
+        uname = request.form.get('username')
+        pwd = request.form.get('password')
+        u_role = request.form.get('role')
+        fname = request.form.get('full_name')
+        
+        if User.query.filter_by(username=uname).first():
+            flash("Това потребителско име вече е заето.")
+        else:
+            new_user = User(
+                username=uname,
+                password_hash=generate_password_hash(pwd),
+                role=u_role,
+                full_name=fname
+            )
+            try:
+                db.session.add(new_user)
+                db.session.commit()
+                flash(f"Потребителят {fname} беше създаден успешно!")
+            except Exception as e:
+                db.session.rollback()
+                print("ГРЕШКА ПРИ СЪЗДАВАНЕ НА ПОТРЕБИТЕЛ:", str(e))
+                flash("Възникна системна грешка при записа.")
+                
+        return redirect(url_for('admin_users_page'))
+        
+    all_users = User.query.all()
+    return render_template('admin_users.html', users=all_users)
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-        if not User.query.filter_by(username="inspector1").first():
-            inspector_user = User(
-                username="inspector1",
-                password_hash=generate_password_hash("iara2026"),
-                role="Инспектор",
-                full_name="инсп. Димитър Георгиев"
+        if not User.query.filter_by(username="admin").first():
+            admin_user = User(
+                username="admin",
+                password_hash=generate_password_hash("iara2026admin"),
+                role="Администратор",
+                full_name="Главен Администратор (Система)"
             )
-            captain_user = User(
-                username="captain1",
-                password_hash=generate_password_hash("ship2026"),
-                role="Капитан",
-                full_name="кап. Иван Петров"
-            )
-            db.session.add(inspector_user)
-            db.session.add(captain_user)
+            db.session.add(admin_user)
             db.session.commit()
     app.run(debug=True)

@@ -1,0 +1,74 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="content-card">
+        <h3 class="section-title" style="text-align: left; margin-bottom: 20px;">Регистрация на нов служител / потребител</h3>
+        <form action="{{ url_for('admin_users_page') }}" method="POST">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Потребителско име (за вход)</label>
+                    <input type="text" name="username" required class="form-input" placeholder="Напр. ivan_inspector">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Парола</label>
+                    <input type="password" name="password" required class="form-input" placeholder="Минимум 6 символа">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Три имена на служителя</label>
+                    <input type="text" name="full_name" required class="form-input" placeholder="Напр. инсп. Иван Иванов">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Глобална системна роля</label>
+                    <select name="role" required class="form-input" style="background-color: white;">
+                        <option value="" disabled selected>-- Изберете ниво на достъп --</option>
+                        <option value="Инспектор">Инспектор (Контролни органи)</option>
+                        <option value="Капитан">Капитан (Търговски флот)</option>
+                        <option value="Администратор">Администратор (Управление)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-navy" style="border: none;">Създай профил</button>
+        </form>
+    </div>
+
+    <div class="content-card">
+        <h3 class="section-title" style="text-align: left; margin-bottom: 20px;">Регистър на потребителите с право на достъп</h3>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Имена</th>
+                        <th>Потребителско име</th>
+                        <th>Ниво на достъп (Роля)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr>
+                        <td>{{ u.id }}</td>
+                        <td style="font-weight: bold; color: #134074;">{{ u.full_name }}</td>
+                        <td>{{ u.username }}</td>
+                        <td>
+                            <span style="padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.9em;
+                                {% if u.role == 'Администратор' %} background-color: #ffd166; color: #000;
+                                {% elif u.role == 'Инспектор' %} background-color: #e0f2fe; color: #0369a1;
+                                {% else %} background-color: #f3f4f6; color: #374151; {% endif %}">
+                                {{ u.role }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
