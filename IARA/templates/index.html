@@ -37,6 +37,9 @@
                     <li><a href="{{ url_for('logout_action') }}" style="color: #ff4d4d; text-decoration: none; font-weight: bold;">Изход</a></li>
                 {% else %}
                     <li><a href="{{ url_for('index')}}">Начало</a></li>
+                    <li><a href="{{ url_for('tickets_page') }}">Издаване на билет</a></li>
+                    <li><a href="{{ url_for('register_page') }}">Регистър билети</a></li>
+                    <li><a href="{{ url_for('report_catch_page') }}">Докладвай улов</a></li>
                     <li style="margin-left: auto;"><a href="{{ url_for('login_page') }}" class="btn-login">Вход за служители</a></li>
                 {% endif %}
             </ul>

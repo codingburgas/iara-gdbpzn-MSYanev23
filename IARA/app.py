@@ -100,6 +100,14 @@ class User(db.Model):
     role = db.Column(db.String(50), nullable=False)  # Инспектор, Капитан, Любител
     full_name = db.Column(db.String(100), nullable=False)
 
+class AmateurCatch(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    ticket_number = db.Column(db.String(50), nullable=False)
+    water_body = db.Column(db.String(100), nullable=False)        # Напр. яз. Искър, р. Дунав
+    fish_species = db.Column(db.String(100), nullable=False)
+    weight_kg = db.Column(db.Float, nullable=False)
+    date_reported = db.Column(db.DateTime, default=datetime.now)
+
 @app.route('/')
 def index():
     return render_template("home.html")    
@@ -442,6 +450,35 @@ def admin_users_page():
     all_users = User.query.all()
     return render_template('admin_users.html', users=all_users)
 
+@app.route('/report-catch', methods=['GET', 'POST'])
+def report_catch_page():
+    if request.method == 'POST':
+        ticket = request.form.get('ticket_number')
+        water = request.form.get('water_body')
+        species = request.form.get('fish_species')
+        weight = float(request.form.get('weight_kg', 0))
+
+        new_catch = AmateurCatch(
+            ticket_number=ticket,
+            water_body=water,
+            fish_species=species,
+            weight_kg=weight
+        )
+
+        try:
+            db.session.add(new_catch)
+            db.session.commit()
+            flash("Вашият улов беше регистриран успешно! Благодарим Ви за съдействието.")
+        except Exception as e:
+            db.session.rollback()
+            print("ГРЕШКА ПРИ ЛЮБИТЕЛСКИ УЛОВ:", str(e))
+            flash("Възникна грешка при изпращането на данните.")
+            
+        return redirect(url_for('report_catch_page'))
+
+    recent_catches = AmateurCatch.query.order_by(AmateurCatch.date_reported.desc()).limit(10).all()
+    return render_template('report_catch.html', catches=recent_catches)
+    
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()

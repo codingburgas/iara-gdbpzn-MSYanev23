@@ -6,43 +6,43 @@
             <h2>Управление на рибарството и аквакултурите</h2>
             <p>Единна платформа за регистрация на кораби, издаване на разрешителни, любителски риболов и контрол на терен.</p>
             <div class="hero-buttons">
-                <a href="/tickets" class="btn btn-primary">Купи билет за риболов</a>
-                <a href="#" class="btn btn-secondary">Електронен дневник</a>
+                <a href="{{ url_for('tickets_page') }}" class="btn btn-primary">Купи билет за риболов</a>
+                <a href="{{ url_for('report_catch_page') }}" class="btn btn-secondary">Докладвай любителски улов</a>
             </div>
         </div>
     </section>
 
     <section class="modules-section">
         <div class="container">
-            <h3 class="section-title">Основни софтуерни модули</h3>
+            <h3 class="section-title">Електронни услуги за граждани и бизнес</h3>
             <div class="modules-grid">
                 
                 <div class="module-card">
-                    <div class="card-icon">🚢</div>
-                    <h4>Регистри и Разрешителни</h4>
-                    <p>Управление на риболовните кораби, технически параметри, собственици и валидност на разрешителните за улов.</p>
-                    <a href="/register" class="card-link">Към регистъра &rarr;</a>
+                    <div class="card-icon">🎣</div>
+                    <h4>Любителски риболов</h4>
+                    <p>Издаване на дигитални билети за граждани, автоматична проверка на ТЕЛК решения и социални намаления за пенсионери.</p>
+                    <a href="{{ url_for('tickets_page') }}" class="card-link">Издаване на билет &rarr;</a>
                 </div>
 
                 <div class="module-card">
-                    <div class="card-icon">📊</div>
-                    <h4>Проследяемост и Дневници</h4>
-                    <p>Подаване на данни за риболовни операции в реално време за кораби над 10 метра и проследяване на улова до магазините.</p>
-                    <a href="/logbook" class="card-link">Вход в дневника &rarr;</a>
+                    <div class="card-icon">📋</div>
+                    <h4>Проверка на билети</h4>
+                    <p>Публичен регистър за бърза справка и проверка на валидността на издадените любителски риболовни билети.</p>
+                    <a href="{{ url_for('register_page') }}" class="card-link">Към регистъра &rarr;</a>
                 </div>
 
                 <div class="module-card">
                     <div class="card-icon">📱</div>
-                    <h4>Контрол и Инспекции</h4>
-                    <p>Мобилен панел за инспектори. Проверка на обекти, билети и разрешителни с възможност за офлайн синхронизация.</p>
-                    <a href="/inspections" class="card-link">Инспекторски достъп &rarr;</a>
+                    <h4>Докладване на улов</h4>
+                    <p>Доброволно вписване на уловената риба след излет за подпомагане на статистиката за популацията във водоемите.</p>
+                    <a href="{{ url_for('report_catch_page') }}" class="card-link">Впиши улов &rarr;</a>
                 </div>
 
                 <div class="module-card">
-                    <div class="card-icon">🎣</div>
-                    <h4>Любителски риболов</h4>
-                    <p>Издаване на дигитални билети за граждани, автоматична проверка на ТЕЛК и бързо регистриране на улова през приложението.</p>
-                    <a href="/tickets" class="card-link">Издаване на билет &rarr;</a>
+                    <div class="card-icon">🏢</div>
+                    <h4>Служебен портал (ИАРА)</h4>
+                    <p>Защитен вход за инспектори, администратори на системата и капитани на кораби за попълване на дневници и актове.</p>
+                    <a href="{{ url_for('login_page') }}" class="card-link">Вход в портала &rarr;</a>
                 </div>
 
             </div>

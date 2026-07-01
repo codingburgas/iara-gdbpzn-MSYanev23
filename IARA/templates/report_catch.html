@@ -1,0 +1,70 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="content-card">
+        <h3 class="section-title" style="text-align: left; margin-bottom: 20px;">Доброволно деклариране на любителски улов</h3>
+        <p style="color: #666; margin-bottom: 20px; font-size: 0.95em;">
+            Помогнете ни да опазим българските водоеми! Като вписвате улова си, Вие съдействате за събирането на важна статистика за популацията на рибните видове и планирането на бъдещи зарибявания.
+        </p>
+        
+        <form action="{{ url_for('report_catch_page') }}" method="POST">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Номер на риболовен билет</label>
+                    <input type="text" name="ticket_number" required class="form-input" placeholder="Напр. БИЛЕТ-2026-1234">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Водоем (язовир, река, черно море)</label>
+                    <input type="text" name="water_body" required class="form-input">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label">Вид уловена риба</label>
+                    <input type="text" name="fish_species" required class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Общо тегло на улова (кг.)</label>
+                    <input type="number" step="0.01" name="weight_kg" required class="form-input" placeholder="0.00">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-navy" style="border: none;">Изпрати данните за улова</button>
+        </form>
+    </div>
+
+    <div class="content-card">
+        <h3 class="section-title" style="text-align: left; margin-bottom: 20px;">Последни докладвани улови от рибари</h3>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Водоем</th>
+                        <th>Вид риба</th>
+                        <th>Тегло (кг)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for catch in catches %}
+                    <tr>
+                        <td>{{ catch.date_reported.strftime('%d.%m.%Y %H:%M') }}</td>
+                        <td style="font-weight: bold; color: #134074;">{{ catch.water_body }}</td>
+                        <td>{{ catch.fish_species }}</td>
+                        <td class="text-price" style="color: #2a9d8f;">{{ "%.2f"|format(catch.weight_kg) }} кг</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: #666;">Все още няма докладвани любителски улови за днес.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
