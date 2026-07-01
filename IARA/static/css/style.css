@@ -5,7 +5,7 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-li{
+li {
     font-weight: bold;
 }
 
@@ -21,7 +21,6 @@ body {
     margin: 0 auto;
 }
 
-/* Навигация */
 .main-header {
     background-color: #0b2545;
     color: #fff;
@@ -50,28 +49,69 @@ body {
     display: block;
 }
 
+.header-fluid {
+    width: 100%;
+    padding: 0 40px;
+}
+.main-nav {
+    margin-left: auto;
+}
+
 .main-nav ul {
     display: flex;
     list-style: none;
     align-items: center;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    font-size: 0.95rem;
 }
 
 .main-nav ul li {
-    margin-left: 20px;
+    margin-left: 0;
 }
 
 .main-nav ul li a {
     color: #eeecf0;
     text-decoration: none;
-    font-size: 0.95rem;
-    transition: color 0.3s;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background-color 0.2s, color 0.3s;
+    white-space: nowrap;
+    display: inline-block;
 }
 
 .main-nav ul li a:hover, .main-nav ul li a.active {
     color: #134074;
     background-color: #fff;
-    padding: 5px 10px;
-    border-radius: 4px;
+}
+
+.main-nav ul li.user-status-item {
+    color: #f4a261;
+    font-weight: bold;
+    padding: 0 10px;
+    white-space: nowrap;
+}
+
+.main-nav ul li.user-status-item span {
+    font-size: 0.8em;
+    font-weight: normal;
+    color: #ddd;
+}
+
+.main-nav ul li a.nav-admin {
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.main-nav ul li a.btn-logout {
+    color: #ff4d4d;
+    font-weight: bold;
+}
+
+.main-nav ul li a.btn-logout:hover {
+    background-color: rgba(255, 77, 77, 0.1);
+    color: #ff4d4d;
 }
 
 .main-nav ul li a.btn-login {
@@ -201,7 +241,6 @@ body {
     text-decoration: underline;
 }
 
-/* Футър */
 .main-footer {
     background-color: #0b2545;
     color: #8da9c4;
@@ -211,7 +250,6 @@ body {
     margin-top: 40px;
 }
 
-/* Адаптивност за мобилни устройства */
 @media (max-width: 768px) {
     .header-flex {
         flex-direction: column;
@@ -225,6 +263,12 @@ body {
     .main-nav ul li {
         margin: 5px 10px;
     }
+    .main-nav ul li.user-status-item {
+        margin-left: 0;
+        width: 100%;
+        text-align: center;
+        padding: 5px 0;
+    }
     .hero-content h2 {
         font-size: 1.8rem;
     }
@@ -234,7 +278,7 @@ body {
         width: 100%;
     }
 }
-/* Допълнителни стилове за форми и таблици в системата */
+
 .content-card {
     background-color: #fff;
     padding: 30px;
@@ -328,6 +372,7 @@ body {
     color: #2e7d32;
     font-weight: 700;
 }
+
 .btn-navy {
     background-color: #134074;
     color: #fff;

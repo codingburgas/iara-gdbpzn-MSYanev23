@@ -450,6 +450,23 @@ def admin_users_page():
     all_users = User.query.all()
     return render_template('admin_users.html', users=all_users)
 
+@app.route('/admin/delete_user/<int:user_id>', methods=['POST'])
+def delete_user_action(user_id):
+    if not session.get('user_id') or session.get('role') != 'Администратор':
+        flash('Нямате достъп до тази операция.', 'error')
+        return redirect(url_for('login_page'))
+    
+    user_to_delete = User.query.get_or_404(user_id)
+    
+    if user_to_delete.id == session.get('user_id'):
+        flash('Не можете да изтриете собствения си администраторски профил!', 'error')
+        return redirect(url_for('admin_users_page'))
+        
+    db.session.delete(user_to_delete)
+    db.session.commit()
+    flash(f'Профилът на {user_to_delete.full_name} беше изтрит успешно.', 'success')
+    return redirect(url_for('admin_users_page'))
+    
 @app.route('/report-catch', methods=['GET', 'POST'])
 def report_catch_page():
     if request.method == 'POST':

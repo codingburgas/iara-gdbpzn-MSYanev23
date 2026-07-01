@@ -44,25 +44,36 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Имена</th>
                         <th>Потребителско име</th>
                         <th>Ниво на достъп (Роля)</th>
+                        <th>Действия</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for u in users %}
                     <tr>
-                        <td>{{ u.id }}</td>
-                        <td style="font-weight: bold; color: #134074;">{{ u.full_name }}</td>
+
+                        <td>{{ u.full_name }}</td>
                         <td>{{ u.username }}</td>
                         <td>
                             <span style="padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.9em;
-                                {% if u.role == 'Администратор' %} background-color: #ffd166; color: #000;
-                                {% elif u.role == 'Инспектор' %} background-color: #e0f2fe; color: #0369a1;
+                                {% if u.role == 'Инспектор' %} background-color: #e0f2fe; color: #0369a1;
                                 {% else %} background-color: #f3f4f6; color: #374151; {% endif %}">
                                 {{ u.role }}
                             </span>
+                        </td>
+
+                        <td>
+                        {% if u.id != session.get('user_id') %}
+                            <form action="{{ url_for('delete_user_action', user_id=u.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Наистина ли искате трайно да изтриете този служител?');">
+                                <button type="submit" style="background-color: #ff4d4d; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.85rem; transition: background 0.2s;">
+                                    Изтрий
+                                </button>
+                            </form>
+                        {% else %}
+                            <span style="color: #666; font-style: italic; font-size: 0.85rem;">Текущ профил</span>
+                        {% endif %}
                         </td>
                     </tr>
                     {% endfor %}
