@@ -1,0 +1,33 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="content-card" style="max-width: 400px; margin: 60px auto; padding: 40px;">
+        <h3 class="section-title" style="text-align: center; margin-bottom: 25px;">Вход в системата на ИАРА</h3>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div style="padding: 10px; background-color: #f8d7da; color: #721c24; border-radius: 4px; margin-bottom: 15px; font-size: 0.9em; text-align: center;">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('login_page') }}" method="POST">
+            <div class="form-group">
+                <label class="form-label">Потребителско име</label>
+                <input type="text" name="username" required class="form-input" placeholder="Въведете потребителско име">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Парола</label>
+                <input type="password" name="password" required class="form-input" placeholder="Въведете парола">
+            </div>
+
+            <button type="submit" class="btn-navy" style="border: none; width: 100%; margin-top: 10px;">Влез</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

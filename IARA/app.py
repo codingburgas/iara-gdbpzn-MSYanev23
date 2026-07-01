@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, session, redirect, url_for, request, render_template, flash
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from datetime import datetime, timedelta
@@ -91,6 +92,13 @@ class EnforcementAct(db.Model):
     fine_amount = db.Column(db.Float, nullable=False)               # Размер на глобата в лева
     status = db.Column(db.String(50), default="Издаден")            # Издаден, Платен, Обжалван
     date_issued = db.Column(db.DateTime, default=datetime.now)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    role = db.Column(db.String(50), nullable=False)  # Инспектор, Капитан, Любител
+    full_name = db.Column(db.String(100), nullable=False)
 
 @app.route('/')
 def index():
@@ -374,7 +382,48 @@ def acts_page():
     all_acts = EnforcementAct.query.order_by(EnforcementAct.date_issued.desc()).all()
     return render_template('acts.html', acts=all_acts)  
 
+@app.route('/login', methods=['GET', 'POST'])
+def login_page():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        user = User.query.filter_by(username=username).first()
+        
+        if user and check_password_hash(user.password_hash, password):
+            session['user_id'] = user.id
+            session['username'] = user.username
+            session['role'] = user.role
+            session['full_name'] = user.full_name
+            flash(f"Добре дошли, {user.full_name}!")
+            return redirect(url_for('vessels_page'))
+            
+        flash("Невалидно потребителско име или парола.")
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout_action():
+    session.clear()
+    flash("Успешно излязохте от системата.")
+    return redirect(url_for('login_page'))
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+        if not User.query.filter_by(username="inspector1").first():
+            inspector_user = User(
+                username="inspector1",
+                password_hash=generate_password_hash("iara2026"),
+                role="Инспектор",
+                full_name="инсп. Димитър Георгиев"
+            )
+            captain_user = User(
+                username="captain1",
+                password_hash=generate_password_hash("ship2026"),
+                role="Капитан",
+                full_name="кап. Иван Петров"
+            )
+            db.session.add(inspector_user)
+            db.session.add(captain_user)
+            db.session.commit()
     app.run(debug=True)
